@@ -27,28 +27,15 @@ type MsgRaw struct {
 	msgID      string
 	msgRawData json.RawMessage
 }
-type Ping struct {
-	Time int
-}
-type Pong struct {
-	Time int
-}
-func ping(args []interface{}) {
-	ping := args[0].(*Ping)
-	agent := args[1].(gate.Agent)
-	agent.SetPong()
-}
+
+
 func NewProcessor() *Processor {
 	p := new(Processor)
 	p.msgInfo = make(map[string]*MsgInfo)
 	p.initRegister()
 	return p
 }
-func (p *Processor) initRegister() {
-	p.Register(&Ping{})
-	p.Register(&gate.Options{})
-	p.SetHandler(&Ping{}, ping)
-}
+
 // It's dangerous to call the method on routing or marshaling (unmarshaling)
 func (p *Processor) Register(msg interface{}) string {
 	msgType := reflect.TypeOf(msg)

@@ -37,9 +37,22 @@ type Options struct {
 	PongTimeOut int
 	AuthTimeOut time.Duration
 }
+
+type Ping struct {
+	Time int
+}
+type Pong struct {
+	Time int
+}
+
+func ping(args []interface{}) {
+
+}
+
 func (gate *Gate) Run(closeSig chan bool) {
 	var wsServer *network.WSServer
-
+	gate.Processor.Register(&Ping{})
+	gate.Processor.SetHandler(&Ping{}, ping)
 	if gate.Options.PingTimeOut <= 0 {
 		gate.Options.PingTimeOut = 10
 	}
