@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"gitee.com/webkit/vuitl/gate"
 	"github.com/name5566/leaf/chanrpc"
 	"github.com/name5566/leaf/log"
+	"github.com/threewe/cool/gate"
 	"reflect"
 )
 
@@ -33,7 +33,11 @@ type Ping struct {
 type Pong struct {
 	Time int
 }
-func ping(args []interface{}) {}
+func ping(args []interface{}) {
+	ping := args[0].(*Ping)
+	agent := args[1].(gate.Agent)
+	agent.SetPong()
+}
 func NewProcessor() *Processor {
 	p := new(Processor)
 	p.msgInfo = make(map[string]*MsgInfo)
@@ -41,7 +45,9 @@ func NewProcessor() *Processor {
 	return p
 }
 func (p *Processor) initRegister() {
+	p.Register(&Ping{})
 	p.Register(&gate.Options{})
+	p.SetHandler(&Ping{}, ping)
 }
 // It's dangerous to call the method on routing or marshaling (unmarshaling)
 func (p *Processor) Register(msg interface{}) string {

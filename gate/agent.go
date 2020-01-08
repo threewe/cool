@@ -1,6 +1,7 @@
 package gate
 
 import (
+	"gitee.com/webkit/vuitl/network/json"
 	"net"
 )
 
@@ -12,5 +13,6 @@ type Agent interface {
 	Destroy()
 	UserData() interface{}
 	SetUserData(data interface{})
+	SetPong(ping *json.Ping)
 	Auth (bool2 bool)
 }

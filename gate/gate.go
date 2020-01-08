@@ -1,9 +1,11 @@
 package gate
 
 import (
+	"fmt"
 	"github.com/name5566/leaf/chanrpc"
 	"github.com/name5566/leaf/log"
-	"gitee.com/webkit/vuitl/network"
+	"github.com/threewe/cool/network"
+	"github.com/threewe/cool/network/json"
 	"net"
 	"reflect"
 	"time"
@@ -40,16 +42,14 @@ func (gate *Gate) Run(closeSig chan bool) {
 
 	if gate.Options.PingTimeOut <= 0 {
 		gate.Options.PingTimeOut = 10
-	} else {
-		gate.Options.PingTimeOut = gate.Options.PingTimeOut
 	}
 	if gate.Options.PongTimeOut >= gate.Options.PingTimeOut - 2 || gate.Options.PongTimeOut <= 0{
 		if gate.Options.PingTimeOut - 2 <= 0 {
 			gate.Options.PongTimeOut =gate.Options.PingTimeOut
 			gate.Options.PingTimeOut += 2
+		} else {
+			gate.Options.PongTimeOut = gate.Options.PingTimeOut - 2;
 		}
-	} else {
-		gate.Options.PingTimeOut = gate.Options.PongTimeOut
 	}
 	if gate.WSAddr != "" {
 		wsServer = new(network.WSServer)
@@ -62,7 +62,7 @@ func (gate *Gate) Run(closeSig chan bool) {
 		wsServer.KeyFile = gate.KeyFile
 		wsServer.NewAgent = func(conn *network.WSConn) network.Agent {
 			a := &agent{conn: conn, gate: gate}
-			a.SetPongHandler(gate.Options)
+			a.SetOptionsHandler(gate.Options)
 			a.SetAuth() // 设置验证
 			if gate.AgentChanRPC != nil {
 				gate.AgentChanRPC.Go("NewAgent", a)
@@ -82,7 +82,7 @@ func (gate *Gate) Run(closeSig chan bool) {
 		tcpServer.LittleEndian = gate.LittleEndian
 		tcpServer.NewAgent = func(conn *network.TCPConn) network.Agent {
 			a := &agent{conn: conn, gate: gate}
-			a.SetPongHandler(gate.Options)
+			a.SetOptionsHandler(gate.Options)
 			a.SetAuth() // 设置验证
 			if gate.AgentChanRPC != nil {
 				gate.AgentChanRPC.Go("NewAgent", a)
@@ -187,6 +187,10 @@ func (a *agent) SetUserData(data interface{}) {
 	a.userData = data
 }
 
+func (a *agent) SetPong(ping *json.Ping) {
+
+}
+
 func (a *agent) Auth(bool2 bool) {
 	if bool2 {
 		a.isAuth = true
@@ -195,8 +199,9 @@ func (a *agent) Auth(bool2 bool) {
 	}
 }
 // 设置心跳
-func (a *agent) SetPongHandler(options *Options) {
+func (a *agent) SetOptionsHandler(options *Options) {
 	a.options = options
+	fmt.Println("发送的数据", options)
 	// 发送参数
 	a.WriteMsg(&Options{
 		PingTimeOut: a.options.PingTimeOut,
