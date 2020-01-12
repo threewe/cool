@@ -32,20 +32,23 @@ type Gate struct {
 }
 
 type Options struct {
-	PingTimeOut int
-	PongTimeOut int
+	PingTimeOut int64
+	PongTimeOut int64
 	AuthTimeOut time.Duration
 }
 
 type Ping struct {
-	Time int
+	Time int64
 }
 type Pong struct {
-	Time int
+	Time int64
 }
 
 func ping(args []interface{}) {
+	ping := args[0].(*Ping)
+	agent := args[1].(Agent)
 
+	fmt.Println(ping.Time, agent.GetOptions())
 }
 
 func (gate *Gate) Run(closeSig chan bool) {
@@ -127,6 +130,7 @@ type agent struct {
 	pongTime int
 	isAuth bool // 是否通过验证
 	options *Options
+	pingTime int64
 }
 
 func (a *agent) Run() {
@@ -225,7 +229,6 @@ func (a *agent) SetOptionsHandler(options *Options) {
 }
 // 设置验证
 func (a *agent) SetAuth() {
-
 	// 开启验证
 	if a.options.AuthTimeOut > 0 {
 		go func(agent *agent) {
@@ -235,4 +238,16 @@ func (a *agent) SetAuth() {
 	} else {
 
 	}
+}
+
+func (a *agent) GetOptions() *Options {
+	return a.options
+}
+
+func (a *agent) SetPingTime(time int64) {
+	a.pingTime = time
+}
+
+func (a *agent) GetPingTime() int64 {
+	return a.pingTime
 }

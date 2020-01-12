@@ -15,4 +15,7 @@ type Agent interface {
 	SetUserData(data interface{})
 	SetPong(ping *json.Ping)
 	Auth (bool2 bool)
+	SetPingTime(time int64)
+	GetPingTime() int64
+	GetOptions() *Options
 }
