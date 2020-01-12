@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/name5566/leaf/chanrpc"
 	"github.com/name5566/leaf/log"
-	"github.com/threewe/cool/gate"
 	"reflect"
 )
 
@@ -32,7 +31,6 @@ type MsgRaw struct {
 func NewProcessor() *Processor {
 	p := new(Processor)
 	p.msgInfo = make(map[string]*MsgInfo)
-	p.initRegister()
 	return p
 }
 
