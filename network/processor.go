@@ -7,6 +7,6 @@ type Processor interface {
 	Unmarshal(data []byte) (interface{}, error)
 	// must goroutine safe
 	Marshal(msg interface{}) ([][]byte, error)
-	Register(msg interface{})
+	Register(msg interface{}) string
 	SetHandler(msg interface{}, msgHandler func(args []interface{}))
 }
