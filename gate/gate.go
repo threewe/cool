@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/name5566/leaf/chanrpc"
 	"github.com/name5566/leaf/log"
+	timer2 "github.com/name5566/leaf/timer"
 	"github.com/threewe/cool/network"
 	"net"
 	"reflect"
@@ -32,8 +33,8 @@ type Gate struct {
 }
 
 type Options struct {
-	PingTimeOut int64
-	PongTimeOut int64
+	PingTimeOut time.Duration
+	PongTimeOut time.Duration
 	AuthTimeOut time.Duration
 }
 
@@ -47,7 +48,12 @@ type Pong struct {
 func ping(args []interface{}) {
 	ping := args[0].(*Ping)
 	agent := args[1].(Agent)
-	fmt.Println(ping.Time, agent)
+	agent.setPingTime(ping.Time) // 设置ping时间
+	agent.Timer(agent.getOptions().PongTimeOut, func() {
+		agent.WriteMsg(&Pong{
+			Time:time.Now().Unix(),
+		})
+	})
 }
 
 func (gate *Gate) Run(closeSig chan bool) {
@@ -131,9 +137,11 @@ type agent struct {
 	isAuth bool // 是否通过验证
 	options *Options
 	pingTime int64
+	timer *timer2.Dispatcher
 }
 
 func (a *agent) Run() {
+	a.timer = timer2.NewDispatcher(6)
 	for {
 		data, err := a.conn.ReadMsg()
 		if err != nil {
@@ -240,14 +248,19 @@ func (a *agent) SetAuth() {
 	}
 }
 
-func (a *agent) GetOptions() *Options {
+func (a *agent) getOptions() *Options {
 	return a.options
 }
 
-func (a *agent) SetPingTime(time int64) {
+func (a *agent) setPingTime(time int64) {
 	a.pingTime = time
 }
 
-func (a *agent) GetPingTime() int64 {
+func (a *agent) getPingTime() int64 {
 	return a.pingTime
+}
+
+
+func (a *agent) Timer(d time.Duration, cb func()) {
+	a.timer.AfterFunc(d, cb)
 }
