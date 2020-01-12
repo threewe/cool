@@ -85,7 +85,7 @@ func (gate *Gate) Run(closeSig chan bool) {
 		wsServer.NewAgent = func(conn *network.WSConn) network.Agent {
 			a := &agent{conn: conn, gate: gate}
 			a.SetOptionsHandler(gate.Options)
-			a.SetAuth() // 设置验证
+			//a.SetAuth() // 设置验证
 			if gate.AgentChanRPC != nil {
 				gate.AgentChanRPC.Go("NewAgent", a)
 			}
@@ -105,7 +105,7 @@ func (gate *Gate) Run(closeSig chan bool) {
 		tcpServer.NewAgent = func(conn *network.TCPConn) network.Agent {
 			a := &agent{conn: conn, gate: gate}
 			a.SetOptionsHandler(gate.Options)
-			a.SetAuth() // 设置验证
+			//a.SetAuth() // 设置验证
 			if gate.AgentChanRPC != nil {
 				gate.AgentChanRPC.Go("NewAgent", a)
 			}
