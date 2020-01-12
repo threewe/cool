@@ -49,12 +49,17 @@ func ping(args []interface{}) {
 	ping := args[0].(*Ping)
 	agent := args[1].(Agent)
 	agent.setPingTime(ping.Time) // 设置ping时间
-	agent.Timer(agent.getOptions().PongTimeOut, func() {
+	fmt.Println("定时器执行1", agent.getOptions().PongTimeOut)
+	go func(a Agent) {
+		time.Sleep(time.Second * agent.getOptions().PongTimeOut)
 		fmt.Println("定时器执行")
 		agent.WriteMsg(&Pong{
 			Time:time.Now().Unix(),
 		})
-	})
+	}(agent)
+	//agent.Timer(agent.getOptions().PongTimeOut, func() {
+	//
+	//})
 }
 
 func (gate *Gate) Run(closeSig chan bool) {
