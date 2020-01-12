@@ -50,6 +50,7 @@ func ping(args []interface{}) {
 	agent := args[1].(Agent)
 	agent.setPingTime(ping.Time) // 设置ping时间
 	agent.Timer(agent.getOptions().PongTimeOut, func() {
+		fmt.Println("定时器执行")
 		agent.WriteMsg(&Pong{
 			Time:time.Now().Unix(),
 		})
