@@ -47,7 +47,7 @@ type Pong struct {
 func ping(args []interface{}) {
 	ping := args[0].(*Ping)
 	//agent := args[1].(Agent)
-	fmt.Println(ping.Time)
+	fmt.Println(ping.Time, args[1])
 }
 
 func (gate *Gate) Run(closeSig chan bool) {
