@@ -2,7 +2,6 @@ package gate
 
 import (
 	"net"
-	"time"
 )
 
 type Agent interface {
@@ -13,9 +12,10 @@ type Agent interface {
 	Destroy()
 	UserData() interface{}
 	SetUserData(data interface{})
-	Timer(d time.Duration, cb func())
-	Auth (bool2 bool)
+	UpdateAuth (bool2 bool)
+	GetAuth() interface{}
 	setPingTime(time int64)
 	getPingTime() int64
 	getOptions() *Options
+	setAuth(auth *Auth)
 }
