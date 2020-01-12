@@ -5,7 +5,6 @@ import (
 	"github.com/name5566/leaf/chanrpc"
 	"github.com/name5566/leaf/log"
 	"github.com/threewe/cool/network"
-	"github.com/threewe/cool/network/json"
 	"net"
 	"reflect"
 	"time"
@@ -200,9 +199,7 @@ func (a *agent) SetUserData(data interface{}) {
 	a.userData = data
 }
 
-func (a *agent) SetPong(ping *json.Ping) {
 
-}
 
 func (a *agent) Auth(bool2 bool) {
 	if bool2 {
@@ -211,10 +208,14 @@ func (a *agent) Auth(bool2 bool) {
 		a.isAuth = false
 	}
 }
+
+
+
 // 设置心跳
 func (a *agent) SetOptionsHandler(options *Options) {
 	a.options = options
 	fmt.Println("发送的数据", options)
+
 	// 发送参数
 	a.WriteMsg(&Options{
 		PingTimeOut: a.options.PingTimeOut,
@@ -224,7 +225,6 @@ func (a *agent) SetOptionsHandler(options *Options) {
 }
 // 设置验证
 func (a *agent) SetAuth() {
-
 
 	// 开启验证
 	if a.options.AuthTimeOut > 0 {
