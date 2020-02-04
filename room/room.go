@@ -1,6 +1,7 @@
 package room
 
 import (
+	"github.com/threewe/cool/vart"
 	"sync"
 )
 type RoomSetUp struct {
@@ -70,7 +71,7 @@ func (ro *Room) GetRoomUserId() int {
 	return ro.roomUserId
 }
 
-func (ro *Room) GetUser(userId int) (interface{}, bool){
+func (ro *Room) GetUser(userId vart.UserId) (interface{}, bool){
 	user, ok := ro.history.Load(userId)
 	if !ok {return nil, ok}
 	return user, ok
